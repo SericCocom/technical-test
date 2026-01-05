@@ -10,12 +10,15 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// Currency routes
-Route::apiResource('currencies', CurrencyController::class);
+// API Routes with Rate Limiting (60 requests per minute)
+Route::middleware(['throttle:api'])->group(function () {
+    // Currency routes
+    Route::apiResource('currencies', CurrencyController::class);
 
-// Product routes
-Route::apiResource('products', ProductController::class);
+    // Product routes
+    Route::apiResource('products', ProductController::class);
 
-// Product prices routes (nested resource)
-Route::apiResource('products.prices', ProductPriceController::class)
-    ->only(['index', 'store']);
+    // Product prices routes (nested resource)
+    Route::apiResource('products.prices', ProductPriceController::class)
+        ->only(['index', 'store']);
+});
